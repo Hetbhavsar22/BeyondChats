@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react"
 import api from "../api/api"
 
-export default function TopBar({ onMenuClick }) {
+export default function TopBar({ onMenuClick, onSyncComplete }) {
   const [days, setDays] = useState(7)
   const [loading, setLoading] = useState(false)
   const [isConnected, setIsConnected] = useState(false)
+  const [syncMsg, setSyncMsg] = useState(null)
 
   useEffect(() => {
     checkStatus()
@@ -25,18 +26,22 @@ export default function TopBar({ onMenuClick }) {
 
   const syncEmails = async () => {
     setLoading(true)
+    setSyncMsg(null)
     try {
       await api.post("/sync", { days })
-      alert("Sync completed")
+      if (onSyncComplete) onSyncComplete()
+      setSyncMsg({ type: 'success', text: `✓ Synced ${days}-day inbox` })
     } catch (err) {
-      alert("System sync error")
+      setSyncMsg({ type: 'error', text: '✗ Sync failed. Check backend.' })
     } finally {
       setLoading(false)
+      setTimeout(() => setSyncMsg(null), 3500)
     }
   }
 
   return (
-    <div className="bg-white border-b border-slate-200 min-h-16 lg:h-16 flex flex-col lg:flex-row lg:items-center justify-between px-4 lg:px-6 sticky top-0 z-30 py-3 lg:py-0 transition-all">
+    <div className="sticky top-0 z-30 bg-white">
+      <div className="border-b border-slate-200 min-h-16 lg:h-16 flex flex-col lg:flex-row lg:items-center justify-between px-4 lg:px-6 py-3 lg:py-0 transition-all">
       <div className="flex items-center justify-between w-full lg:w-auto mb-3 lg:mb-0">
         <div className="flex items-center gap-3">
           <button 
@@ -91,6 +96,14 @@ export default function TopBar({ onMenuClick }) {
           </button>
         </div>
       </div>
+      </div>
+      {syncMsg && (
+        <div className={`text-center text-[11px] font-bold py-1.5 px-4 transition-all ${
+          syncMsg.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-rose-50 text-rose-700'
+        }`}>
+          {syncMsg.text}
+        </div>
+      )}
     </div>
   )
 }
