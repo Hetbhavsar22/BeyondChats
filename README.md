@@ -35,13 +35,18 @@ graph TD
 ### Gmail Integration & Sync
 - **OAuth 2.0 Flow**: Securely connect your Gmail account using official Google Auth.
 - **Dynamic History Sync**: Choose how many days of history (e.g., Last 7 Days) you want to synchronize.
+- **Dual Folder Sync**: Automatically fetches and categorizes both **Inbox** and **Sent** emails.
 - **Smart Formatting**: Preserves original HTML structure, layouts, and styles for a native email experience.
 - **Attachment Detection**: Real-time identification of attachments with visual indicators (📎) in the inbox.
 - **Secure Disconnect**: Safely remove your Gmail connection and clear tokens with a single click.
 
-### Dashboard & UX
+### Dashboard, UX & Extra Innovations
 - **Threaded View**: Conversations are grouped and displayed with clear sender/receiver details.
-- **AI-Powered Summaries**: (Simulation) Automated summaries of long email threads for quick consumption.
+- **Sent Folder Tab**: A dedicated section to browse and read your sent emails, functioning exactly like the inbox.
+- **Interaction Analytics**: A real-time data visualization page (`/analytics`) showing 7-day activity, topics, and top senders.
+- **Smart Content Filters & Topic Tagging**: One-tap filter chips (All, Files, Urgent, Work) and auto-generated colorful topic tags (e.g., `[Meeting]`, `[Invoice]`) based on intelligent keyword matching.
+- **Starred/Bookmark System**: "Star" important emails to instantly access them via the Starred filter (saves state efficiently in `localStorage`).
+- **Pro Keyboard Shortcuts**: Global hotkeys making the app feel native (`/` for search, `j`/`k` to navigate the list, `r` to reply).
 - **Direct Reply**: Send replies to any thread directly from the dashboard.
 - **Live Connection Status**: Visual "Live" badges and status indicators showing connection health.
 
