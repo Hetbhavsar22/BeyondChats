@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('emails', function (Blueprint $table) {
-            //
+            $table->string('folder')->default('inbox')->after('has_attachments');
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('emails', function (Blueprint $table) {
-            //
+            $table->dropColumn('folder');
         });
     }
 };
