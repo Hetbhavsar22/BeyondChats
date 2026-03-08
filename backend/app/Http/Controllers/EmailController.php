@@ -40,7 +40,8 @@ class EmailController extends Controller
 
         $messages = $service->users_messages->listUsersMessages('me', [
             'maxResults' => 500,
-            'q' => "after:{$afterDate}"
+            'labelIds'   => ['INBOX'],
+            'q'          => "after:{$afterDate}"
         ]);
 
         foreach ($messages->getMessages() as $message) {
