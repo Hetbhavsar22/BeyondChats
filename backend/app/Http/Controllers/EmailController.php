@@ -35,8 +35,12 @@ class EmailController extends Controller
 
         $service = new Gmail($client);
 
-        $messages = $service->users_messages->listUsersMessages('me',[
-            'maxResults'=>10
+        $days = max(1, (int) $request->input('days', 7));
+        $afterDate = date('Y/m/d', strtotime("-{$days} days"));
+
+        $messages = $service->users_messages->listUsersMessages('me', [
+            'maxResults' => 500,
+            'q' => "after:{$afterDate}"
         ]);
 
         foreach ($messages->getMessages() as $message) {
