@@ -24,14 +24,18 @@ export default function EmailList({ emails, selectEmail, selectedId }) {
 
   const filteredEmails = useMemo(() => {
     let base = emails;
-    if (filter === "Files") base = emails.filter(e => e.has_attachments);
+    if (filter === "Files") base = emails.filter(e => e.has_attachments || (e.body || "").includes("[Attachment]"));
     else if (filter === "Urgent") base = emails.filter(e => {
         const sub = (e.subject || "").toLowerCase();
-        return sub.includes("urgent") || sub.includes("asap") || sub.includes("priority");
+        const body = (e.body || "").toLowerCase();
+        return sub.match(/urgent|asap|priority|action required|immediate|response needed/) ||
+               body.match(/urgent|asap|action required/);
     });
     else if (filter === "Work") base = emails.filter(e => {
+        const sub = (e.subject || "").toLowerCase();
         const sender = (e.sender || "").toLowerCase();
-        return sender.includes("office") || sender.includes("team") || sender.includes("client");
+        return sender.match(/office|team|client|hr|hiring|recruiter|noreply|support|admin|info@|career/) ||
+               sub.match(/interview|offer|application|meeting|project|deadline|report|invoice|proposal/);
     });
     if (search.trim()) {
       const q = search.toLowerCase();

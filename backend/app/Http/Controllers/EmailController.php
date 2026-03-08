@@ -57,15 +57,17 @@ class EmailController extends Controller
             // Recursive function to extract body and attachments
             $emailContent = $this->parseMessageParts($payload);
             
-            Email::create([
-                "gmail_id" => $msg->getId(),
-                "thread_id" => $msg->getThreadId(),
-                "sender" => $from,
-                "receiver" => $to,
-                "subject" => $subject,
-                "body" => $emailContent['body'] ?: "No content",
-                "has_attachments" => !empty($emailContent['attachments'])
-            ]);
+            Email::updateOrCreate(
+                ["gmail_id" => $msg->getId()],
+                [
+                    "thread_id" => $msg->getThreadId(),
+                    "sender" => $from,
+                    "receiver" => $to,
+                    "subject" => $subject,
+                    "body" => $emailContent['body'] ?: "No content",
+                    "has_attachments" => !empty($emailContent['attachments'])
+                ]
+            );
         }
 
         return response()->json([
