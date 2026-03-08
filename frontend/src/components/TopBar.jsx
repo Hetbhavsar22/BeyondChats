@@ -33,11 +33,10 @@ export default function TopBar({ onMenuClick, onSyncComplete }) {
       const count = res.data?.count ?? "some";
       setSyncMsg({ type: "success", text: `Synced ${count} emails from last ${days} day(s)` });
     } catch (err) {
-      // Even on timeout, emails may have been partially saved — show a warning
       setSyncMsg({ type: "warning", text: "Sync may have timed out. Refreshing inbox..." });
     } finally {
       setLoading(false);
-      if (onSyncComplete) onSyncComplete(); // Always refresh
+      if (onSyncComplete) onSyncComplete();
       setTimeout(() => setSyncMsg(null), 4000);
     }
   };
@@ -56,7 +55,6 @@ export default function TopBar({ onMenuClick, onSyncComplete }) {
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Status Badge */}
           {isConnected ? (
             <div className="hidden lg:flex items-center gap-1.5 bg-green-50 text-green-700 px-3 py-1.5 rounded-lg border border-green-100">
               <Wifi size={12} />
@@ -69,7 +67,6 @@ export default function TopBar({ onMenuClick, onSyncComplete }) {
             </div>
           )}
 
-          {/* Mobile connection dot */}
           {isConnected && (
             <div className="lg:hidden flex items-center gap-1 bg-green-50 px-2 py-1 rounded-full border border-green-100">
               <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
@@ -77,7 +74,6 @@ export default function TopBar({ onMenuClick, onSyncComplete }) {
             </div>
           )}
 
-          {/* History days input */}
           <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5">
             <span className="text-[9px] font-bold text-slate-400 uppercase hidden sm:inline">History:</span>
             <input
@@ -91,7 +87,6 @@ export default function TopBar({ onMenuClick, onSyncComplete }) {
             <span className="text-[9px] font-bold text-slate-400 uppercase">Days</span>
           </div>
 
-          {/* Connect button (if not connected) */}
           {!isConnected && (
             <button
               className="bg-white border border-slate-300 text-slate-700 px-3 py-1.5 rounded-lg text-[10px] font-bold hover:bg-slate-50 transition-colors shadow-sm"
@@ -101,7 +96,6 @@ export default function TopBar({ onMenuClick, onSyncComplete }) {
             </button>
           )}
 
-          {/* Sync button */}
           <button
             className="bg-slate-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold hover:bg-slate-700 transition-all shadow-sm disabled:opacity-50 flex items-center gap-1.5"
             onClick={syncEmails}
@@ -113,11 +107,9 @@ export default function TopBar({ onMenuClick, onSyncComplete }) {
         </div>
       </div>
 
-      {/* Inline toast message */}
       {syncMsg && (
-        <div className={`flex items-center justify-center gap-2 py-1.5 px-4 text-[11px] font-semibold ${
-          syncMsg.type === "success" ? "bg-green-50 text-green-700" : "bg-rose-50 text-rose-700"
-        }`}>
+        <div className={`flex items-center justify-center gap-2 py-1.5 px-4 text-[11px] font-semibold ${syncMsg.type === "success" ? "bg-green-50 text-green-700" : "bg-rose-50 text-rose-700"
+          }`}>
           {syncMsg.type === "success" ? <Check size={12} /> : <AlertCircle size={12} />}
           {syncMsg.text}
         </div>

@@ -126,7 +126,6 @@ export default function Analytics() {
 
             {stats && (
               <>
-                {/* Stat Cards */}
                 <div className="grid grid-cols-2 gap-3 mb-4">
                   <StatCard label="Total Emails" value={emails.length} sub="In your inbox" />
                   <StatCard label="With Attachments" value={stats.withFiles} sub={`${Math.round(stats.withFiles / emails.length * 100)}% of inbox`} />
@@ -134,7 +133,6 @@ export default function Analytics() {
                   <StatCard label="Top Category" value={Object.entries(stats.topics).sort((a, b) => b[1] - a[1])[0][0]} sub="Most common topic" color="bg-blue-50" />
                 </div>
 
-                {/* Daily Activity Bar Chart */}
                 <div className="bg-white rounded-xl p-4 border border-slate-100 mb-4">
                   <h2 className="text-xs font-bold text-slate-700 uppercase tracking-widest mb-3">7-Day Activity</h2>
                   <div className="flex items-end gap-2 h-20">
@@ -151,7 +149,6 @@ export default function Analytics() {
                   </div>
                 </div>
 
-                {/* Topic Distribution */}
                 <div className="bg-white rounded-xl p-4 border border-slate-100 mb-4">
                   <h2 className="text-xs font-bold text-slate-700 uppercase tracking-widest mb-3">Topic Breakdown</h2>
                   <div className="space-y-2">
@@ -170,7 +167,6 @@ export default function Analytics() {
                   </div>
                 </div>
 
-                {/* Top Senders */}
                 <div className="bg-white rounded-xl p-4 border border-slate-100">
                   <h2 className="text-xs font-bold text-slate-700 uppercase tracking-widest mb-3">Top Senders</h2>
                   <div className="space-y-2">

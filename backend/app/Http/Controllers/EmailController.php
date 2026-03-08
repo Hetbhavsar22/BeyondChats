@@ -12,7 +12,7 @@ class EmailController extends Controller
 
     public function syncEmails(Request $request)
     {
-        set_time_limit(300); // allow up to 5 minutes for large inboxes
+        set_time_limit(300);
 
         $tokenPath = storage_path('gmail_token.json');
 

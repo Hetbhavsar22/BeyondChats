@@ -30,13 +30,11 @@ export default function Dashboard() {
 
   return (
     <div className="flex h-screen bg-slate-100 overflow-hidden relative">
-      {/* Mobile Sidebar Overlay */}
       <div 
         className={`fixed inset-0 bg-slate-900/50 z-50 transition-opacity lg:hidden ${isSidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
         onClick={() => setIsSidebarOpen(false)}
       />
       
-      {/* Sidebar - Desktop & Mobile Drawer */}
       <div className={`fixed lg:static inset-y-0 left-0 z-50 transform lg:transform-none transition-transform duration-300 lg:block shrink-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <Sidebar onClose={() => setIsSidebarOpen(false)} />
       </div>

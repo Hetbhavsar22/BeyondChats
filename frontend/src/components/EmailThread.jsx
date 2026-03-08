@@ -37,7 +37,6 @@ export default function EmailThread({ email }) {
 
   return (
     <div className="flex-1 flex flex-col bg-white overflow-hidden pt-16 lg:pt-0">
-      {/* Header */}
       <div className="p-6 lg:p-10 border-b border-slate-100">
         <h2 className="text-xl lg:text-2xl font-bold text-black leading-tight mb-4">
           {email.subject || '(No Subject)'}
@@ -69,10 +68,8 @@ export default function EmailThread({ email }) {
         </div>
       </div>
 
-      {/* Body */}
       <div className="p-4 lg:p-10 flex-1 overflow-y-auto custom-scrollbar">
         <div className="max-w-3xl mx-auto">
-          {/* AI Summary */}
           <div className="mb-6 p-4 bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 rounded-xl">
             <h4 className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-2 flex items-center gap-1.5">
               <Sparkles size={11} />
@@ -83,7 +80,6 @@ export default function EmailThread({ email }) {
             </p>
           </div>
 
-          {/* Email Body */}
           <div
             className="text-[15px] text-slate-900 leading-relaxed font-normal selection:bg-blue-100 content-area"
             dangerouslySetInnerHTML={{
@@ -93,7 +89,6 @@ export default function EmailThread({ email }) {
             }}
           />
 
-          {/* Attachments section (only if has attachments) */}
           {email.has_attachments && (
             <div className="mt-10 pt-6 border-t border-slate-100">
               <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-1.5">
@@ -111,7 +106,6 @@ export default function EmailThread({ email }) {
         </div>
       </div>
 
-      {/* Reply Box */}
       <div className="p-4 lg:p-6 border-t border-slate-100 bg-slate-50/50">
         {sent && (
           <div className="flex items-center justify-center gap-2 mb-2 text-green-600 text-[11px] font-semibold bg-green-50 py-1.5 rounded-lg border border-green-100">

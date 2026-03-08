@@ -30,13 +30,13 @@ export default function EmailList({ emails, selectEmail, selectedId }) {
       const sub = (e.subject || "").toLowerCase();
       const body = (e.body || "").toLowerCase();
       return sub.match(/urgent|asap|priority|action required|immediate|response needed/) ||
-             body.match(/urgent|asap|action required/);
+        body.match(/urgent|asap|action required/);
     });
     else if (filter === "Work") base = emails.filter(e => {
       const sub = (e.subject || "").toLowerCase();
       const sender = (e.sender || "").toLowerCase();
       return sender.match(/office|team|client|hr|hiring|recruiter|noreply|support|admin|info@|career/) ||
-             sub.match(/interview|offer|application|meeting|project|deadline|report|invoice|proposal/);
+        sub.match(/interview|offer|application|meeting|project|deadline|report|invoice|proposal/);
     });
 
     if (search.trim()) {
@@ -51,7 +51,12 @@ export default function EmailList({ emails, selectEmail, selectedId }) {
 
   const stats = useMemo(() => {
     return {
-      urgent: emails.filter(e => (e.subject || "").toLowerCase().match(/urgent|asap|priority/)).length,
+      urgent: emails.filter(e => {
+        const sub = (e.subject || "").toLowerCase();
+        const body = (e.body || "").toLowerCase();
+        return sub.match(/urgent|asap|priority|action required|immediate|response needed/) ||
+          body.match(/urgent|asap|action required/);
+      }).length,
       files: emails.filter(e => e.has_attachments).length,
       work: emails.filter(e =>
         (e.sender || "").toLowerCase().match(/office|team|client|hr|hiring|recruiter|noreply|support|career/) ||
@@ -69,14 +74,12 @@ export default function EmailList({ emails, selectEmail, selectedId }) {
 
   return (
     <div className="w-full lg:w-80 border-r border-slate-200 bg-white flex flex-col h-full overflow-hidden">
-      {/* Header */}
       <div className="px-4 py-3 border-b border-slate-200 bg-white">
         <div className="flex items-center justify-between mb-2">
           <span className="font-bold text-slate-900 text-xs uppercase tracking-widest">Inbox</span>
           <span className="text-[10px] font-bold text-slate-400">{filteredEmails.length}/{emails.length}</span>
         </div>
 
-        {/* Search */}
         <div className="relative mb-2">
           <Files size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
@@ -91,7 +94,6 @@ export default function EmailList({ emails, selectEmail, selectedId }) {
           )}
         </div>
 
-        {/* Filter chips */}
         <div className="flex gap-1.5 overflow-x-auto pb-0.5 no-scrollbar">
           {chips.map(chip => {
             const active = filter === chip.id;
@@ -99,11 +101,10 @@ export default function EmailList({ emails, selectEmail, selectedId }) {
               <button
                 key={chip.id}
                 onClick={() => setFilter(chip.id)}
-                className={`whitespace-nowrap flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold transition-all border ${
-                  active
+                className={`whitespace-nowrap flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold transition-all border ${active
                     ? "bg-slate-900 text-white border-slate-900"
                     : "bg-white text-slate-500 border-slate-200 hover:border-slate-300"
-                }`}
+                  }`}
               >
                 <chip.Icon size={10} />
                 {chip.label}
@@ -114,7 +115,6 @@ export default function EmailList({ emails, selectEmail, selectedId }) {
         </div>
       </div>
 
-      {/* Email list */}
       <div className="flex-1 overflow-y-auto custom-scrollbar">
         {filteredEmails.length === 0 ? (
           <div className="p-8 text-center text-slate-400 text-xs font-medium">No messages matching "{filter}".</div>
@@ -124,15 +124,13 @@ export default function EmailList({ emails, selectEmail, selectedId }) {
             return (
               <div
                 key={email.id}
-                className={`p-4 border-b border-slate-100 transition-colors cursor-pointer ${
-                  selectedId === email.id ? "bg-blue-50" : "hover:bg-slate-50"
-                }`}
+                className={`p-4 border-b border-slate-100 transition-colors cursor-pointer ${selectedId === email.id ? "bg-blue-50" : "hover:bg-slate-50"
+                  }`}
                 onClick={() => selectEmail(email)}
               >
                 <div className="flex gap-3">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
-                    selectedId === email.id ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-500"
-                  }`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${selectedId === email.id ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-500"
+                    }`}>
                     {getInitials(email.sender)}
                   </div>
 
