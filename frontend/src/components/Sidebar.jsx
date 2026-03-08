@@ -5,6 +5,7 @@ export default function Sidebar({ onClose }) {
 
   const navItems = [
     { name: "Chats", icon: "✉️", path: "/" },
+    { name: "Analytics", icon: "📊", path: "/analytics" },
     { name: "Integrations", icon: "⚙️", path: "/integrations" },
   ];
 
