@@ -1,9 +1,25 @@
-import { useState, useMemo } from "react";
-import { Paperclip, AlertTriangle, Briefcase, Files, LayoutList } from "lucide-react";
+import { useState, useMemo, useEffect, useRef } from "react";
+import { Paperclip, AlertTriangle, Briefcase, Files, LayoutList, Star } from "lucide-react";
 
-export default function EmailList({ emails, selectEmail, selectedId, folderName }) {
+export default function EmailList({ emails, selectEmail, selectedId, folderName, starredIds = [], toggleStar }) {
   const [filter, setFilter] = useState("All");
   const [search, setSearch] = useState("");
+  const searchInputRef = useRef(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Don't trigger if user is typing in a textarea or another input
+      if (e.target.tagName === 'INPUT' && e.target !== searchInputRef.current) return;
+      if (e.target.tagName === 'TEXTAREA') return;
+
+      if (e.key === '/') {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const getInitials = (name) => {
     return name ? name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 1) : "?";
@@ -25,7 +41,8 @@ export default function EmailList({ emails, selectEmail, selectedId, folderName 
 
   const filteredEmails = useMemo(() => {
     let base = emails;
-    if (filter === "Files") base = emails.filter(e => e.has_attachments || (e.body || "").includes("[Attachment]"));
+    if (filter === "Starred") base = emails.filter(e => starredIds.includes(e.id));
+    else if (filter === "Files") base = emails.filter(e => e.has_attachments || (e.body || "").includes("[Attachment]"));
     else if (filter === "Urgent") base = emails.filter(e => {
       const sub = (e.subject || "").toLowerCase();
       const body = (e.body || "").toLowerCase();
@@ -47,10 +64,11 @@ export default function EmailList({ emails, selectEmail, selectedId, folderName 
       );
     }
     return base;
-  }, [emails, filter, search]);
+  }, [emails, filter, search, starredIds]);
 
   const stats = useMemo(() => {
     return {
+      starred: emails.filter(e => starredIds.includes(e.id)).length,
       urgent: emails.filter(e => {
         const sub = (e.subject || "").toLowerCase();
         const body = (e.body || "").toLowerCase();
@@ -63,10 +81,11 @@ export default function EmailList({ emails, selectEmail, selectedId, folderName 
         (e.subject || "").toLowerCase().match(/interview|offer|application|meeting|project|deadline/)
       ).length
     };
-  }, [emails]);
+  }, [emails, starredIds]);
 
   const chips = [
     { id: "All", label: "All", Icon: LayoutList, count: null },
+    { id: "Starred", label: "Starred", Icon: Star, count: stats.starred },
     { id: "Files", label: "Files", Icon: Paperclip, count: stats.files },
     { id: "Urgent", label: "Urgent", Icon: AlertTriangle, count: stats.urgent },
     { id: "Work", label: "Work", Icon: Briefcase, count: stats.work },
@@ -83,8 +102,9 @@ export default function EmailList({ emails, selectEmail, selectedId, folderName 
         <div className="relative mb-2">
           <Files size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
+            ref={searchInputRef}
             type="text"
-            placeholder="Search sender or subject..."
+            placeholder="Search sender or subject... (/)"
             value={search}
             onChange={e => setSearch(e.target.value)}
             className="w-full pl-7 pr-7 py-1.5 text-[11px] border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:border-blue-400 focus:bg-white transition-all placeholder:text-slate-400"
@@ -123,6 +143,7 @@ export default function EmailList({ emails, selectEmail, selectedId, folderName 
             const tags = getTags(email);
             return (
               <div
+                id={`email-row-${email.id}`}
                 key={email.id}
                 className={`p-4 border-b border-slate-100 transition-colors cursor-pointer ${selectedId === email.id ? "bg-blue-50" : "hover:bg-slate-50"
                   }`}
@@ -139,9 +160,14 @@ export default function EmailList({ emails, selectEmail, selectedId, folderName 
                       <h4 className={`text-sm font-bold truncate ${selectedId === email.id ? "text-blue-700" : "text-slate-900"}`}>
                         {email.sender?.split('<')[0].trim() || email.sender}
                       </h4>
-                      <span className="text-[9px] font-bold text-slate-400 shrink-0">
-                        {new Date(email.created_at).toLocaleDateString([], { month: 'short', day: 'numeric' })}
-                      </span>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <button onClick={(e) => toggleStar(email.id, e)} className="text-slate-300 hover:text-amber-400 focus:outline-none transition-colors">
+                          <Star size={12} className={starredIds.includes(email.id) ? "fill-amber-400 text-amber-400" : ""} />
+                        </button>
+                        <span className="text-[9px] font-bold text-slate-400">
+                          {new Date(email.created_at).toLocaleDateString([], { month: 'short', day: 'numeric' })}
+                        </span>
+                      </div>
                     </div>
 
                     <div className="flex justify-between items-center mb-1">

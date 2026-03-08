@@ -15,7 +15,7 @@ export default function Sidebar({ onClose }) {
     <div className="w-64 bg-white border-r border-slate-200 h-screen flex flex-col sticky top-0 shadow-xl lg:shadow-none">
       <div className="p-6 border-b border-slate-100 flex items-center justify-between">
         <h1 className="text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-blue-600 inline-block"></span>
+          {/* <span className="w-2 h-2 rounded-full bg-blue-600 inline-block"></span> */}
           BeyondChats
         </h1>
         <button
@@ -35,11 +35,10 @@ export default function Sidebar({ onClose }) {
               key={item.name}
               to={item.path}
               onClick={onClose}
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors cursor-pointer text-sm font-medium ${
-                active
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors cursor-pointer text-sm font-medium ${active
                   ? "bg-slate-900 text-white"
                   : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"
-              }`}
+                }`}
             >
               <Icon size={16} strokeWidth={active ? 2.5 : 2} />
               <span>{item.name}</span>
