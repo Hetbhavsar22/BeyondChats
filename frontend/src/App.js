@@ -7,7 +7,8 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Dashboard />} />
+        <Route path="/" element={<Dashboard folder="inbox" />} />
+        <Route path="/sent" element={<Dashboard folder="sent" />} />
         <Route path="/integrations" element={<Integrations />} />
         <Route path="/analytics" element={<Analytics />} />
       </Routes>

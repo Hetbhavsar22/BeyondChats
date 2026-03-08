@@ -33,13 +33,20 @@ class EmailController extends Controller
         $days = max(1, (int) $request->input('days', 7));
         $afterDate = date('Y/m/d', strtotime("-{$days} days"));
 
-        $messages = $service->users_messages->listUsersMessages('me', [
-            'maxResults' => 200,
+        $inboxMessages = $service->users_messages->listUsersMessages('me', [
+            'maxResults' => 150,
             'labelIds'   => ['INBOX'],
             'q'          => "after:{$afterDate}"
-        ]);
+        ])->getMessages();
 
-        $messageList = $messages->getMessages();
+        $sentMessages = $service->users_messages->listUsersMessages('me', [
+            'maxResults' => 50,
+            'labelIds'   => ['SENT'],
+            'q'          => "after:{$afterDate}"
+        ])->getMessages();
+
+        $messageList = array_merge((array) $inboxMessages, (array) $sentMessages);
+
         if (empty($messageList)) {
             return response()->json(["status" => "No emails found for this period", "count" => 0]);
         }
@@ -51,6 +58,7 @@ class EmailController extends Controller
             ]);
             $payload = $msg->getPayload();
             $headers = $payload->getHeaders();
+            $labels = $msg->getLabelIds();
 
             $subject = "";
             $from = "";
@@ -63,6 +71,7 @@ class EmailController extends Controller
             }
 
             $emailContent = $this->parseMessageParts($payload);
+            $folder = (is_array($labels) && in_array('SENT', $labels)) ? 'sent' : 'inbox';
 
             Email::updateOrCreate(
                 ["gmail_id" => $msg->getId()],
@@ -72,7 +81,8 @@ class EmailController extends Controller
                     "receiver"        => $to,
                     "subject"         => $subject,
                     "body"            => $emailContent['body'] ?: "No content",
-                    "has_attachments" => !empty($emailContent['attachments'])
+                    "has_attachments" => !empty($emailContent['attachments']),
+                    "folder"          => $folder
                 ]
             );
             $synced++;

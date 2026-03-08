@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { Paperclip, AlertTriangle, Briefcase, Files, LayoutList } from "lucide-react";
 
-export default function EmailList({ emails, selectEmail, selectedId }) {
+export default function EmailList({ emails, selectEmail, selectedId, folderName }) {
   const [filter, setFilter] = useState("All");
   const [search, setSearch] = useState("");
 
@@ -76,7 +76,7 @@ export default function EmailList({ emails, selectEmail, selectedId }) {
     <div className="w-full lg:w-80 border-r border-slate-200 bg-white flex flex-col h-full overflow-hidden">
       <div className="px-4 py-3 border-b border-slate-200 bg-white">
         <div className="flex items-center justify-between mb-2">
-          <span className="font-bold text-slate-900 text-xs uppercase tracking-widest">Inbox</span>
+          <span className="font-bold text-slate-900 text-xs uppercase tracking-widest">{folderName || "Inbox"}</span>
           <span className="text-[10px] font-bold text-slate-400">{filteredEmails.length}/{emails.length}</span>
         </div>
 

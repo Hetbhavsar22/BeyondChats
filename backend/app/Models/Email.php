@@ -8,15 +8,14 @@ class Email extends Model
 {
 
     protected $fillable = [
-
         'gmail_id',
         'thread_id',
         'sender',
         'receiver',
         'subject',
         'body',
-        'has_attachments'
-
+        'has_attachments',
+        'folder'
     ];
 
 }

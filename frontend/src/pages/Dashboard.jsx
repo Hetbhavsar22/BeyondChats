@@ -5,7 +5,7 @@ import EmailList from "../components/EmailList"
 import EmailThread from "../components/EmailThread"
 import api from "../api/api"
 
-export default function Dashboard() {
+export default function Dashboard({ folder = "inbox" }) {
   const [emails, setEmails] = useState([])
   const [selected, setSelected] = useState(null)
   const [isMobileListVisible, setIsMobileListVisible] = useState(true)
@@ -13,7 +13,9 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchEmails()
-  }, [])
+    setSelected(null)
+    setIsMobileListVisible(true)
+  }, [folder])
 
   const fetchEmails = () => {
     api.get("/emails").then(res => {
@@ -28,6 +30,8 @@ export default function Dashboard() {
     }
   }
 
+  const displayedEmails = emails.filter(e => e.folder === folder)
+
   return (
     <div className="flex h-screen bg-slate-100 overflow-hidden relative">
       <div 
@@ -36,7 +40,7 @@ export default function Dashboard() {
       />
       
       <div className={`fixed lg:static inset-y-0 left-0 z-50 transform lg:transform-none transition-transform duration-300 lg:block shrink-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <Sidebar onClose={() => setIsSidebarOpen(false)} />
+        <Sidebar onClose={() => setIsSidebarOpen(false)} activeTab={folder} />
       </div>
 
       <div className="flex-1 flex flex-col min-w-0 bg-white shadow-2xl relative">
@@ -45,9 +49,10 @@ export default function Dashboard() {
         <div className="flex flex-1 overflow-hidden relative">
           <div className={`${isMobileListVisible ? 'flex' : 'hidden'} lg:flex h-full border-r border-slate-100 shrink-0`}>
             <EmailList
-              emails={emails}
+              emails={displayedEmails}
               selectEmail={handleSelectEmail}
               selectedId={selected?.id}
+              folderName={folder === 'sent' ? 'Sent' : 'Inbox'}
             />
           </div>
 
@@ -58,7 +63,7 @@ export default function Dashboard() {
                   onClick={() => setIsMobileListVisible(true)}
                   className="bg-slate-900 text-white px-4 py-2 rounded-full shadow-xl flex items-center gap-2 text-[10px] font-black uppercase tracking-widest active:scale-95 transition-all"
                 >
-                  <span className="text-lg font-normal">←</span> Back to Inbox
+                  <span className="text-lg font-normal">←</span> Back to {folder === 'sent' ? 'Sent' : 'Inbox'}
                 </button>
               </div>
             )}

@@ -1,11 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
-import { Mail, Settings, BarChart2, X } from "lucide-react";
+import { Mail, Send, Settings, BarChart2, X } from "lucide-react";
 
 export default function Sidebar({ onClose }) {
   const location = useLocation();
 
   const navItems = [
-    { name: "Chats", icon: Mail, path: "/" },
+    { name: "Inbox", icon: Mail, path: "/" },
+    { name: "Sent", icon: Send, path: "/sent" },
     { name: "Analytics", icon: BarChart2, path: "/analytics" },
     { name: "Integrations", icon: Settings, path: "/integrations" },
   ];
