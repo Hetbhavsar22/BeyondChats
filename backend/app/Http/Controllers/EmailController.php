@@ -12,25 +12,20 @@ class EmailController extends Controller
 
     public function syncEmails(Request $request)
     {
+        set_time_limit(300); // allow up to 5 minutes for large inboxes
 
         $tokenPath = storage_path('gmail_token.json');
 
         if (!file_exists($tokenPath)) {
-
-            return response()->json([
-                "error" => "Please connect Gmail first"
-            ],400);
-
+            return response()->json(["error" => "Please connect Gmail first"], 400);
         }
 
         $token = json_decode(file_get_contents($tokenPath), true);
 
         $client = new Client();
-
         $client->setClientId(env('GOOGLE_CLIENT_ID'));
         $client->setClientSecret(env('GOOGLE_CLIENT_SECRET'));
         $client->setRedirectUri(env('GOOGLE_REDIRECT_URI'));
-
         $client->setAccessToken($token);
 
         $service = new Gmail($client);
@@ -39,13 +34,21 @@ class EmailController extends Controller
         $afterDate = date('Y/m/d', strtotime("-{$days} days"));
 
         $messages = $service->users_messages->listUsersMessages('me', [
-            'maxResults' => 500,
+            'maxResults' => 200,
             'labelIds'   => ['INBOX'],
             'q'          => "after:{$afterDate}"
         ]);
 
-        foreach ($messages->getMessages() as $message) {
-            $msg = $service->users_messages->get('me', $message->getId());
+        $messageList = $messages->getMessages();
+        if (empty($messageList)) {
+            return response()->json(["status" => "No emails found for this period", "count" => 0]);
+        }
+
+        $synced = 0;
+        foreach ($messageList as $message) {
+            $msg = $service->users_messages->get('me', $message->getId(), [
+                'format' => 'full'
+            ]);
             $payload = $msg->getPayload();
             $headers = $payload->getHeaders();
 
@@ -55,28 +58,29 @@ class EmailController extends Controller
 
             foreach ($headers as $header) {
                 if ($header->getName() == "Subject") $subject = $header->getValue();
-                if ($header->getName() == "From") $from = $header->getValue();
-                if ($header->getName() == "To") $to = $header->getValue();
+                if ($header->getName() == "From")    $from    = $header->getValue();
+                if ($header->getName() == "To")      $to      = $header->getValue();
             }
 
-            // Recursive function to extract body and attachments
             $emailContent = $this->parseMessageParts($payload);
-            
+
             Email::updateOrCreate(
                 ["gmail_id" => $msg->getId()],
                 [
-                    "thread_id" => $msg->getThreadId(),
-                    "sender" => $from,
-                    "receiver" => $to,
-                    "subject" => $subject,
-                    "body" => $emailContent['body'] ?: "No content",
+                    "thread_id"       => $msg->getThreadId(),
+                    "sender"          => $from,
+                    "receiver"        => $to,
+                    "subject"         => $subject,
+                    "body"            => $emailContent['body'] ?: "No content",
                     "has_attachments" => !empty($emailContent['attachments'])
                 ]
             );
+            $synced++;
         }
 
         return response()->json([
-            "status" => "Emails synced successfully"
+            "status" => "Emails synced successfully",
+            "count"  => $synced
         ]);
     }
 

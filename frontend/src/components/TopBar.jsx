@@ -29,14 +29,16 @@ export default function TopBar({ onMenuClick, onSyncComplete }) {
     setLoading(true);
     setSyncMsg(null);
     try {
-      await api.post("/sync", { days });
-      if (onSyncComplete) onSyncComplete();
-      setSyncMsg({ type: "success", text: `Synced ${days}-day inbox successfully` });
+      const res = await api.post("/sync", { days });
+      const count = res.data?.count ?? "some";
+      setSyncMsg({ type: "success", text: `Synced ${count} emails from last ${days} day(s)` });
     } catch (err) {
-      setSyncMsg({ type: "error", text: "Sync failed. Check backend." });
+      // Even on timeout, emails may have been partially saved — show a warning
+      setSyncMsg({ type: "warning", text: "Sync may have timed out. Refreshing inbox..." });
     } finally {
       setLoading(false);
-      setTimeout(() => setSyncMsg(null), 3500);
+      if (onSyncComplete) onSyncComplete(); // Always refresh
+      setTimeout(() => setSyncMsg(null), 4000);
     }
   };
 
