@@ -77,10 +77,13 @@ beyondchats-email-dashboard/
 5. Run migrations: `php artisan migrate`
 6. **Configure Google Credentials** in `.env`:
    ```env
+   # Google OAuth Credentials
    GOOGLE_CLIENT_ID=your_client_id
    GOOGLE_CLIENT_SECRET=your_client_secret
    GOOGLE_REDIRECT_URI=http://127.0.0.1:8000/api/gmail/callback
    ```
+   > [!NOTE]
+   > Ensure the Redirect URI in Google Cloud Console matches exactly.
 7. Start the API server: `php artisan serve`
 
 ### 2. Frontend (React) Setup
@@ -91,6 +94,21 @@ beyondchats-email-dashboard/
 
 ---
 
+## ⚠️ Important: Authentication Note (Recruiters)
+
+Since the Google OAuth app is currently in **"Testing"** mode in the Google Cloud Console, only authorized "Test Users" can log in by default. 
+
+**To test this locally, you should**:
+1. Create a project in [Google Cloud Console](https://console.cloud.google.com/).
+2. Enable the **Gmail API**.
+3. Create **OAuth 2.0 Client IDs** (Web Application).
+4. Add `http://127.0.0.1:8000/api/gmail/callback` to the **Authorized redirect URIs**.
+5. Update the `.env` file with your `CLIENT_ID` and `CLIENT_SECRET`.
+
+*Alternatively, if the developer sets the app to "In Production" status, any Google account can log in (after clicking "Advanced" on the unverified app warning screen).*
+
+---
+
 ## Final Compliance Audit (PDF)
 - [x] **ReactJS + Laravel** (Non-negotiable)
 - [x] **Gmail OAuth Integration**
@@ -98,8 +116,7 @@ beyondchats-email-dashboard/
 - [x] **Thread Formatting Preservation**
 - [x] **Attachment Detection UI**
 - [x] **Full Mobile Responsiveness**
-- [x] **Architecture Diagram Included**
-- [x] **Setup Documentation Included**
+- [x] Readme with setup docs & Architecture diagram.
 
 ---
 *Created as part of the BeyondChats FSWD Employment Assignment.*
