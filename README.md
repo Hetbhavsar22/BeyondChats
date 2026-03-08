@@ -4,13 +4,6 @@ A professional, high-performance email management dashboard built with **ReactJS
 
 ---
 
-## Project Demo
-> [!IMPORTANT]
-> **Demo Video Link**: [Insert Your Google Drive Video Link Here]
-> *As per the assignment requirements, please include a video demoing every feature and functionality.*
-
----
-
 ## Project Architecture & Data Flow
 
 ```mermaid
